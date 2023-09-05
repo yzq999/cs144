@@ -3,6 +3,7 @@
 #include "byte_stream.hh"
 
 #include <string>
+#include <map>
 
 class Reassembler
 {
@@ -27,8 +28,15 @@ public:
    *
    * The Reassembler should close the stream after writing the last byte.
    */
+
   void insert( uint64_t first_index, std::string data, bool is_last_substring, Writer& output );
 
   // How many bytes are stored in the Reassembler itself?
   uint64_t bytes_pending() const;
+
+// protected:
+  int capacity_{0};
+  uint64_t start_{0};
+  std::map<int,std::string> q{};
+  bool is_close{false};
 };

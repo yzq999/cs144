@@ -17,6 +17,7 @@ void speed_test( const size_t num_chunks,   // NOLINT(bugprone-easily-swappable-
                  const size_t capacity,     // NOLINT(bugprone-easily-swappable-parameters)
                  const size_t random_seed ) // NOLINT(bugprone-easily-swappable-parameters)
 {
+
   // Generate the data to be written
   const string data = [&] {
     default_random_engine rd { random_seed };
@@ -43,15 +44,24 @@ void speed_test( const size_t num_chunks,   // NOLINT(bugprone-easily-swappable-
   output_data.reserve( data.size() );
 
   const auto start_time = steady_clock::now();
+
   while ( not split_data.empty() ) {
+
     auto& next = split_data.front();
+    string test = get<string>( next );
+
     reassembler.insert( get<uint64_t>( next ), move( get<string>( next ) ), get<bool>( next ), stream.writer() );
+
     split_data.pop();
+    // cout << test << endl;
 
     while ( stream.reader().bytes_buffered() ) {
+      
       output_data += stream.reader().peek();
       stream.reader().pop( output_data.size() - stream.reader().bytes_popped() );
+
     }
+
   }
 
   const auto stop_time = steady_clock::now();
